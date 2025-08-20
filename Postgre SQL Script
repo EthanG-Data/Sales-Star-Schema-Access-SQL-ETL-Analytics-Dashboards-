@@ -59,3 +59,121 @@ CREATE INDEX f_sales_salesorder_idx ON fact_sales(salesorder_key);
 CREATE INDEX f_sales_product_idx ON fact_sales(product_key);
 CREATE INDEX f_sales_salesperson_idx ON fact_sales(salesperson_key);
 
+
+--Staging tables creation---
+CREATE TABLE stg_product (
+productid TEXT,
+productname TEXT,
+category TEXT,
+price TEXT
+);
+
+CREATE TABLE stg_customer (
+customerid TEXT, 
+customername TEXT, 
+address TEXT,
+city TEXT,
+state TEXT,
+zipcode TEXT,
+country TEXT
+);
+
+CREATE TABLE stg_salesperson (
+salespersonid TEXT,
+salespersonname TEXT,
+region TEXT
+);
+
+CREATE TABLE_salesorder (
+orderid TEXT,
+orderdate TEXT,
+customerid TEXT,
+productid TEXT,
+quantity TEXT,
+paymenttype TEXT,
+salespersonid TEXT 
+);
+
+--Use psql to execute \copy works---
+\copy stg_salesperson FROM 'data/Sales_Salesperson.csv' 
+\copy stg_salesorder  FROM 'data/Sales_Salesorder.csv'  
+\copy stg_product     FROM 'data/Sales_product.csv'     
+\copy stg_customer    FROM 'data/Sales_customer.csv'    
+
+
+--Upsert into dimension tables
+
+--Customer Dimension--
+INSERT INTO customer(customer_id, customer_name, address,city, state, zipcode)
+SELECT DISTINCT 
+s.customerid,
+s.customername,
+s.address,
+s.city,
+s.state,
+s.zipcode
+s.country
+FROM stg_customer s
+WHERE s.customerid IS NOT NULL
+ON CONFLICT (customer_id) DO UPDATE
+SET customer_name =EXCLUDED.customer_name,
+address =EXCLUDED.address,
+city= EXCLUDED.city
+state= EXCLUDED.state
+zipcode= EXCLUDED.zipcode, 
+country= EXCLUDED.COUNTRY;
+
+--Product Dimension--
+INSERT INTO product (product_id, product_name, category, price)
+SELECT DISTINCT
+s.productid,
+s.productname,
+s.category,
+NULLIF (REPLACE(REPLACE(s.price,'$',''),',',''),'')::numeric
+FROM stg_product s
+WHERE s.productid IS NOT NULL
+ON CONFLICT (product_id) DO UPDATE
+SET product_name=EXCLUDED.product_name,
+   category=EXCLUDED.category,
+   price=EXCLUDED.price;
+
+--Salesperson customer--
+INSERT INTO salesperson (salesperson_id, salesperson_name, region)
+SELECT DISTINCT
+s.salespersonid,
+s.salespersonname,
+s.region
+FROM stg_salesperson s
+WHERE s.salespersonid IS NOT NULL
+ON CONFLICT (salesperson_id) DO UPDATE 
+SET salesperson_name = EXCLUDED.salesperson_name,
+    region= EXCLUDED.region;
+
+--Parse OrderDate--
+INSERT INTO salesorder (order_id, order_date, customer_key, product_key, quantity, salesperson_key)
+SELECT 
+so.orderid,
+CASE
+ WHEN so.orderdate ~ '^\d{4}-\d{2}-\d{2}$' THEN so.orderdate::date
+ ELSE to_date(so.orderdate, 'DD-Mon-YY')
+ END AS order_date,
+c.customer_key,
+p.product_key,
+NULLIF(so.quantity,'')::numeric,
+sp.salesperson_key,
+so.paymenttype
+FROM stg_salesorder so
+JOIN customer c ON c.customer_id = so.customerid
+JOIN product p ON  p.product_id = so.productid
+LEFT JOIN salesperson sp ON sp.salesperson_id = so.salespersonid
+ON CONFLICT (order_id) DO NOTHING; 
+
+--Derive fact_sales--
+INSERT INTO fact_sales (customer_key, salesorder_key, salesperson_key, product_key)
+SELECT so.customer_key, so.salesorder_key, so.salesperson_key, so.product_key
+FROM salesorder so
+LEFT JOIN fact_sales f
+ON f.salesorder_key = so.salesorder_key
+AND f.product_key = so.product_key
+AND f.salesperson_key= so.salesperson_key
+WHERE f.sales_key IS NULL
