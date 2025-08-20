@@ -177,3 +177,36 @@ ON f.salesorder_key = so.salesorder_key
 AND f.product_key = so.product_key
 AND f.salesperson_key= so.salesperson_key
 WHERE f.sales_key IS NULL
+
+--Row counts--
+SELECT 'customer' t, COUNT(*) FROM customer
+UNION ALL SELECT 'product', COUNT(*) FROM product
+UNION ALL SELECT 'salesperson', COUNT(*) FROM salesperson
+UNION ALL SELECT 'salesorder', COUNT(*) FROM salesorder
+UNION ALL SELECT 'fact_sales', COUNT(*) FROM fact_sales;
+
+--Possible Orphans--
+--Salesorder to Customer--
+SELECT COUNT(*) AS missing_customer
+FROM salesorder so
+LEFT JOIN customer c ON c.customer_key = so.customer_key
+WHERE c.customer_key IS NULL;
+
+--Salesorder to product--
+SELECT COUNT(*) AS missing_product
+FROM salesorder so
+LEFT JOIN product p ON p.product_key = so.product_key
+WHERE p.product_key IS NULL;
+
+--Salesorder to Salesperson--
+SELECT COUNT(*) AS missing_salesperson
+FROM salesorder so
+LEFT JOIN salesperson s ON s.salesperson_key = so.salesperson_key
+WHERE so.salesperson_key IS NOT NULL AND s.salesperson_key IS NULL;
+
+-- Fact_sales to Salesorder--
+SELECT COUNT(*) AS missing_salesorder
+FROM fact_sales f
+LEFT JOIN salesorder so ON so.salesorder_key = f.salesorder_key
+WHERE so.salesorder_key IS NULL;
+
