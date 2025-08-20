@@ -6,12 +6,11 @@ This project encapsulates the full lifecycle of building and analyzing a sales d
    - Shows referential integrity and star schema design.  
 
 2. **Access Database Build**  
-   - Creation of tables (FactSales, DimCustomer, DimProduct, DimSalesperson, DimDate).  
-   - Relationships enforced in Access with screenshots.  
-   - Export instructions to CSV.  
+   - Creation of tables (FactSales, Customer, Product, Salesperson, Salesorder).  
+   - Relationships enforced in Access with a data file attached.  
 
 3. **Portable SQL DDL Scripts**  
-   - PostgreSQL and SQLite schema files.  
+   - PostgreSQL schema files.  
    - Surrogate keys, constraints, and indexes defined.  
 
 4. **ETL Pipeline**  
@@ -22,12 +21,11 @@ This project encapsulates the full lifecycle of building and analyzing a sales d
    - SQL scripts for referential integrity, duplicates, and negative/invalid values.  
 
 6. **Analytics Queries**  
-   - Revenue by customer, product, category, and salesperson.  
-   - Customer Lifetime Value (CLV) and RFM scoring examples.  
+   - Revenue by customer, product, category, and salesperson.    
    - Cohort and retention analysis queries.  
 
 7. **Business Intelligence Dashboard**  
-   - Power BI / Tableau file showcasing KPIs and visualizations.  
+   - Tableau file showcasing KPIs and visualizations.  
    - Screenshots included for quick preview.  
 
 8. **Documentation**  
