@@ -1,0 +1,44 @@
+CREATE TABLE customer (
+  customer_key   SERIAL PRIMARY KEY,
+  customer_id    TEXT UNIQUE,
+  customer_name  TEXT NOT NULL,
+  address        TEXT,
+  city           TEXT,
+  state          TEXT,
+  zipcode        TEXT,
+  country        TEXT
+);
+
+CREATE TABLE product (
+  product_key    SERIAL PRIMARY KEY,
+  product_id     TEXT UNIQUE,
+  product_name   TEXT NOT NULL,
+  category       TEXT,
+  price          NUMERIC(12,4) CHECK (price IS NULL OR price >= 0)
+);
+
+CREATE TABLE salesperson (
+  salesperson_key  SERIAL PRIMARY KEY,
+  salesperson_id      TEXT UNIQUE,
+  salesperson_name TEXT NOT NULL,
+  region        TEXT,
+);
+
+CREATE TABLE salesorder (
+  salesorder_key   SERIAL PRIMARY KEY,
+  order_id    TEXT UNIQUE NOT NULL,
+  order_data DATE NOT NULL,
+  customer_key INTEGER NOT NULL REFERENCES customer(customer_key),
+  product_key INTEGER NOT NULL REFERENCES product(product_key),
+  quantity NUMERIC(12,2) NOT NULL CHECK (quantity >=0),
+  salesperson_key INTEGER REFERENCES salesperson(salesperson_key),
+  payment_type TEXT,
+);
+
+CREATE TABLE fact_sales (
+  sales_key  BIGSERIAL PRIMARY KEY,
+  customer_key INTEGER NOT NULL REFERENCES customer(customer_key),
+  salesorder_key INTEGER NOT NULL REFERENCES salesorder(salesorder_key),
+  salesperson_key INTEGER NOT NULL REFERENCES salesperson(salesperson_key),
+  product_key INTEGER NOT NULL REFERENCES product(product_key)
+ CONSTRAINT uq_fact_sales UNIQUE (cproduct_key, salesperson_key,salesorder_key));
