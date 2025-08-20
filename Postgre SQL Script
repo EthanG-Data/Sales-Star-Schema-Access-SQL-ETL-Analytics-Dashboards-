@@ -1,3 +1,5 @@
+--Dimension Creation---
+
 CREATE TABLE customer (
   customer_key   SERIAL PRIMARY KEY,
   customer_id    TEXT UNIQUE,
@@ -35,10 +37,25 @@ CREATE TABLE salesorder (
   payment_type TEXT,
 );
 
+--index for analytics/FK filters--
+
+CREATE INDEX so_order_id_idx ON salesorder(order_id);
+CREATE INDEX so_order_date_idx ON salesorder (order_date);
+CREATE INDEX so_customer_idx ON salesorder (customer_key);
+CREATE INDEX so_product_idx ON salesorder(product_key);
+CREATE INDEX so_salesperson_idx ON salesorder(salesperson_key);
+
 CREATE TABLE fact_sales (
   sales_key  BIGSERIAL PRIMARY KEY,
   customer_key INTEGER NOT NULL REFERENCES customer(customer_key),
   salesorder_key INTEGER NOT NULL REFERENCES salesorder(salesorder_key),
   salesperson_key INTEGER NOT NULL REFERENCES salesperson(salesperson_key),
   product_key INTEGER NOT NULL REFERENCES product(product_key)
- CONSTRAINT uq_fact_sales UNIQUE (cproduct_key, salesperson_key,salesorder_key));
+ CONSTRAINT uq_fact_sales UNIQUE (product_key, salesperson_key,salesorder_key));
+
+--Performance indexes--
+CREATE INDEX f_sales_customer_idx ON fact_sales(customer_key);
+CREATE INDEX f_sales_salesorder_idx ON fact_sales(salesorder_key);
+CREATE INDEX f_sales_product_idx ON fact_sales(product_key);
+CREATE INDEX f_sales_salesperson_idx ON fact_sales(salesperson_key);
+
