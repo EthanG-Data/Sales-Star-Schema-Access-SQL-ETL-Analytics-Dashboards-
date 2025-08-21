@@ -14,21 +14,16 @@ This project encapsulates the full lifecycle of building and analyzing a sales d
    - Surrogate keys, constraints, and indexes defined.  
 
 4. **ETL Pipeline**  
-   - Python script to load CSV extracts into a relational database.  
-   - Idempotent loading (safe to re-run).  
+   - SQL code for importing csv in MySQL and Postgre SQL  
 
 5. **Data Quality Checks**  
    - SQL scripts for referential integrity, duplicates, and negative/invalid values.  
 
-6. **Analytics Queries**  
-   - Revenue by customer, product, category, and salesperson.    
-   - Cohort and retention analysis queries.  
-
-7. **Business Intelligence Dashboard**  
+6. **Business Intelligence Dashboard**  
    - Tableau file showcasing KPIs and visualizations.  
-   - Screenshots included for quick preview.  
+     
 
 8. **Documentation**  
-   - README with setup instructions and repo map.  
-   - `data_dictionary.md` with field descriptions.  
-   - `design_decisions.md` outlining schema rationale.  
+   -Access acdb file
+   -Postgre Sql code
+   -MySql workbench code
