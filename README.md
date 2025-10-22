@@ -1,4 +1,4 @@
-# Sales-Star-Schema-Access-SQL-ETL-Analytics-Dashboards-
+# Sales Star Schema 
 This project encapsulates the full lifecycle of building and analyzing a sales data mart:
 
 1. **Entity-Relationship Diagram (ERD)**  
