@@ -1,4 +1,4 @@
-**Imagery Branch- Database ERD & Sales Dashboard**
+# Imagery Branch- Database ERD & Sales Dashboard
 
   This branch contains the **Visual assets** that support the data analytics project found in the 'script' branch.
   It includes the **Entity Relationship Diagram (ERD)** used to design the relational database and the **Sales Dashboard** built from the processed data.
