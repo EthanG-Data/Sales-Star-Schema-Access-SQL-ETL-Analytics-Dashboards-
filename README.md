@@ -1,4 +1,4 @@
-**Database Branch- Microsoft Access (.accdb) Data Model**
+# Database Branch- Microsoft Access (.accdb) Data Model
 
 This branch contains the **Microsoft Access (.accdb)** database file that implements the relational data model for the sales analytics project.
 It serves as the foundational layer from which data is extracted, transformed, and analyzed in SQL scripts and Tableau dashboards located in the other branches.
